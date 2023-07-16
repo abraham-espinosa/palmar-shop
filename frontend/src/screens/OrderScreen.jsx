@@ -1,6 +1,6 @@
 import React from 'react'
 import {Link, useParams} from 'react-router-dom'
-import { Row, Col, ListGroup, Image, Form, Button, Card, ListGroupItem } from 'react-bootstrap';
+import { Row, Col, ListGroup, Image, Button, Card } from 'react-bootstrap';
 import { useEffect} from 'react';
 import { PayPalButtons, usePayPalScriptReducer} from '@paypal/react-paypal-js'
 import { 
@@ -11,7 +11,7 @@ import {
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import {toast} from 'react-toastify'
-import { UseSelector, useSelector } from 'react-redux';
+import {  useSelector } from 'react-redux';
 
 const OrderScreen = () => {
   const { id: orderId } = useParams();

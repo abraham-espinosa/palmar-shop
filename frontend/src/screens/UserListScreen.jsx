@@ -1,10 +1,9 @@
 import React from 'react'
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import {Form, Table, Row, Col, Button, Card, ListGroup, ListGroupItem} from 'react-bootstrap';
+import { Table, Button} from 'react-bootstrap';
 import { useGetUsersQuery, useDeleteUserMutation } from '../slices/usersApiSlice';
 import { Link } from 'react-router-dom'
-import { LinkContainer } from 'react-router-bootstrap'
 import {toast} from 'react-toastify'
 
 const UserListScreen = () => {
