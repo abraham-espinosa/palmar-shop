@@ -3,7 +3,11 @@ import {Link, useParams} from 'react-router-dom'
 import { Row, Col, ListGroup, Image, Form, Button, Card, ListGroupItem } from 'react-bootstrap';
 import { useEffect} from 'react';
 import { PayPalButtons, usePayPalScriptReducer} from '@paypal/react-paypal-js'
-import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPayPalClientIdQuery} from '../slices/ordersApiSlice'
+import { 
+  useGetOrderDetailsQuery, 
+  usePayOrderMutation, 
+  useGetPayPalClientIdQuery,
+  useDeliverOrderMutation} from '../slices/ordersApiSlice'
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import {toast} from 'react-toastify'
@@ -14,6 +18,7 @@ const OrderScreen = () => {
 
   const {data: order, refetch, isLoading, error} = useGetOrderDetailsQuery(orderId);
   const [payOrder, {isLoading:isLoadingPay}] = usePayOrderMutation();
+  const [deliverOrder, {isLoading:isLoadingDeliver}] = useDeliverOrderMutation();
   const [ {isPending}, paypalDispatch] =usePayPalScriptReducer();
   const { data: paypal, isLoading: isLoadingPayPal, error: errorPayPal} = useGetPayPalClientIdQuery();
   const {userInfo} = useSelector((state) => state.auth);
@@ -73,6 +78,16 @@ const OrderScreen = () => {
       return orderId;
     });
   }
+
+  const deliverOrderHandler = async () => {
+    try {
+      await deliverOrder(orderId);
+      refetch();
+      toast.success('Order marked as delivered');
+    } catch (err) {
+      toast.error(err.data.message || err.message);
+    }
+  } 
   
   return isLoading ? <Loader /> : error ? <Message variant='danger' /> : (
     <>
@@ -97,7 +112,7 @@ const OrderScreen = () => {
                 <strong>Address: </strong> {order.shippingAddress.address}, {order.shippingAddress.city}, {order.shippingAddress.postalCode}, {order.shippingAddress.country}
               </p>
               <p>
-                <strong>Delivered: </strong>{order.isDelivered ? (`Delivered on ${order.deliveredAt}`
+                <strong>Delivered: </strong>{order.isDelivered ? (`Delivered on ${order.deliveredAt.substring(0,10)}`
                 ) : ( 'Not delivered, estimated date in 7 days after purchase'
                 )}
               </p>
@@ -166,6 +181,17 @@ const OrderScreen = () => {
                         <PayPalButtons createOrder={createOrder} onApprove={onApprove} onError={onError}></PayPalButtons>
                       </div>
                   )}
+                  </ListGroup.Item>
+                )}
+                {isLoadingDeliver && <Loader/>}
+                {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered &&(
+                  <ListGroup.Item>
+                    <Button
+                      type='button'
+                      className='btn btn-block'
+                      onClick={deliverOrderHandler}>
+                        Order Has Delivered
+                    </Button>
                   </ListGroup.Item>
                 )}
             </ListGroup>

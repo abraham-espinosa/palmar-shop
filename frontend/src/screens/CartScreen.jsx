@@ -26,7 +26,14 @@ const CartScreen = () => {
     }
 
     return <Row>
-        <Link className='btn btn-light my-3' to='/'>Return</Link>
+        <Row>
+        <Col className='text-center'>        
+        <Link to='/' className='btn btn-sm mx-2 btn-primary' >
+                            Return
+        </Link>  
+        </Col>
+
+        </Row>
         <Col md={8}>
             <h1 style={{marginBottom: '20px'}}>Cart</h1>
             { cartItems.length === 0 ? (

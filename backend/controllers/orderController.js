@@ -79,7 +79,7 @@ const updateOrderToBePaid = asyncHandler(async (req, res) => {
       res.status(200).json(updateOrder);
     } else {
       res.status(404);
-      throw new Error('Something went wrong, it was not possible to fin information about this order')
+      throw new Error('Something went wrong, it was not possible to find information about this order')
     }
 });
 
@@ -88,13 +88,25 @@ const updateOrderToBePaid = asyncHandler(async (req, res) => {
 // UPDATE ORDER TO BE DELIVERED
 // GET /api/orders/:id/deliver
 const updateOrderToBeDelivered = asyncHandler(async (req, res) => {
-    res.json('update order to be delivered');
+    const order = await Order.findById(req.params.id);
+    if (order){
+      order.isDelivered = true;
+      order.deliveredAt = Date.now();
+      const updateOrder = await order.save();
+
+      res.status(200).json(updateOrder);
+
+    }else {
+      res.status(404);
+      throw new Error('Something went wrong, try again');
+    }
 });
 
 // GET ALL ORDERS
 // GET /api/orders
 const getAllOrders = asyncHandler(async (req, res) => {
-    res.json('get all orders');
+const orders = await Order.find({}).populate('user', 'id name');
+res.status(200).json(orders);
 });
 
 export {
